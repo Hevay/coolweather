@@ -198,50 +198,54 @@ public class WeatherActivity extends AppCompatActivity {
      * 处理并展示Weather实体类中的数据
      */
     private void showWeatherInfo(Weather weather) {
-        String cityName = weather.basic.cityName;
-        String updateTime = weather.update.updateTime.split(" ")[1];
-        String degree = weather.now.temperature + "℃";
-        String weatherInfo = weather.now.info;
-        titleCity.setText(cityName);
-        titleUpdateTime.setText(updateTime);
-        degreeText.setText(degree);
-        weatherInfoText.setText(weatherInfo);
-        //未来3到10天天气预报信息
-        forecastLayout.removeAllViews();
-        for (Forecast forecast : weather.forecastList) {
-            View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
-            TextView dateText = view.findViewById(R.id.date_text);
-            TextView infoText = view.findViewById(R.id.info_text);
-            TextView maxText = view.findViewById(R.id.max_text);
-            TextView minText = view.findViewById(R.id.min_text);
-            dateText.setText(forecast.date);
-            //TODO 需要判断获取到是白天还是晚上的详情，先暂时写上白天的
-            infoText.setText(forecast.dayInfo);
-            maxText.setText("最高温度" + forecast.max + "℃");
-            minText.setText("最低温度" + forecast.min + "℃");
-            forecastLayout.addView(view);
+        if (weather != null && "ok".equals(weather.status)) {
+            String cityName = weather.basic.cityName;
+            String updateTime = weather.update.updateTime.split(" ")[1];
+            String degree = weather.now.temperature + "℃";
+            String weatherInfo = weather.now.info;
+            titleCity.setText(cityName);
+            titleUpdateTime.setText(updateTime);
+            degreeText.setText(degree);
+            weatherInfoText.setText(weatherInfo);
+            //未来3到10天天气预报信息
+            forecastLayout.removeAllViews();
+            for (Forecast forecast : weather.forecastList) {
+                View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
+                TextView dateText = view.findViewById(R.id.date_text);
+                TextView infoText = view.findViewById(R.id.info_text);
+                TextView maxText = view.findViewById(R.id.max_text);
+                TextView minText = view.findViewById(R.id.min_text);
+                dateText.setText(forecast.date);
+                //TODO 需要判断获取到是白天还是晚上的详情，先暂时写上白天的
+                infoText.setText(forecast.dayInfo);
+                maxText.setText("最高温度" + forecast.max + "℃");
+                minText.setText("最低温度" + forecast.min + "℃");
+                forecastLayout.addView(view);
+            }
+
+            String comfort = "舒适度：";
+            String carWash = "洗车指数：";
+            String sport = "运动建议：";
+            for (LifeStyle lifeStyle : weather.lifeStyleList) {
+                if ("comf".equals(lifeStyle.type)) {
+                    comfort += lifeStyle.info;
+                }
+
+                if ("cw".equals(lifeStyle.type)) {
+                    carWash += lifeStyle.info;
+                }
+
+                if ("sport".equals(lifeStyle.type)) {
+                    sport += lifeStyle.info;
+                }
+            }
+
+            comfortText.setText(comfort);
+            carWashText.setText(carWash);
+            sportText.setText(sport);
+            weatherLayout.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
         }
-
-        String comfort = "舒适度：";
-        String carWash = "洗车指数：";
-        String sport = "运动建议：";
-        for (LifeStyle lifeStyle : weather.lifeStyleList) {
-            if ("comf".equals(lifeStyle.type)) {
-                comfort += lifeStyle.info;
-            }
-
-            if ("cw".equals(lifeStyle.type)) {
-                carWash += lifeStyle.info;
-            }
-
-            if ("sport".equals(lifeStyle.type)) {
-                sport += lifeStyle.info;
-            }
-        }
-
-        comfortText.setText(comfort);
-        carWashText.setText(carWash);
-        sportText.setText(sport);
-        weatherLayout.setVisibility(View.VISIBLE);
     }
 }
