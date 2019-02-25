@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -198,6 +199,9 @@ public class WeatherActivity extends AppCompatActivity {
      * 处理并展示Weather实体类中的数据
      */
     private void showWeatherInfo(Weather weather) {
+        Time time = new Time("GMT+8");
+        time.setToNow();
+        int hour = time.hour;
         if (weather != null && "ok".equals(weather.status)) {
             String cityName = weather.basic.cityName;
             String updateTime = weather.update.updateTime.split(" ")[1];
@@ -216,8 +220,13 @@ public class WeatherActivity extends AppCompatActivity {
                 TextView maxText = view.findViewById(R.id.max_text);
                 TextView minText = view.findViewById(R.id.min_text);
                 dateText.setText(forecast.date);
-                //TODO 需要判断获取到是白天还是晚上的详情，先暂时写上白天的
-                infoText.setText(forecast.dayInfo);
+                if (hour >= 7 && hour <= 18) {
+                    //白天天气详情
+                    infoText.setText(forecast.dayInfo);
+                } else {
+                    //晚上
+                    infoText.setText(forecast.nightInfo);
+                }
                 maxText.setText("最高温度" + forecast.max + "℃");
                 minText.setText("最低温度" + forecast.min + "℃");
                 forecastLayout.addView(view);
